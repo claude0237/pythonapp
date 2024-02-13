@@ -31,9 +31,9 @@ node {
 	     sshCommand remote: remote, command: 'mkdir deployment', failOnError:'false'
 	     sshCommand remote: remote, command: 'docker run -d -p 3333:3333 ${dockerhubaccountid}/${application}:${BUILD_NUMBER}'
 	      }	   
-	     stage('Remove old images') {
-	     sshCommand remote: remote, command: 'cd /home/softtech/deployment;docker rmi ${dockerhubaccountid}/${application}:latest -f'
-	     }
+   stage('Remove old images') {
+	  sshCommand remote: remote, command: 'cd /home/softtech/deployment;docker rmi ${dockerhubaccountid}/${application}:latest -f'
+   }
         
     }
 }
