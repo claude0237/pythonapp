@@ -22,8 +22,6 @@ node {
     }
 
    stage("Deploy App!") {
-	 def dockerhubaccountid = "claudenkoma"
-	 def application = "pythonapp"
 	  withCredentials([sshUserPrivateKey(credentialsId: 'softtech-priv-key-139', keyFileVariable: 'identity', passphraseVariable: '', usernameVariable: 'softtech')]) {
 	  remote.user = softtech
 	  remote.identityFile = identity
