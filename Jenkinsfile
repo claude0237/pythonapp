@@ -1,6 +1,11 @@
 node {
     def application = "pythonapp"
     def dockerhubaccountid = "claudenkoma"
+	def remote = [:]
+	remote.name = "softtech"
+	remote.host = "10.12.1.139"
+	remote.allowAnyHosts = true
+	
     stage('Clone repository') {
         checkout scm
     }
@@ -16,12 +21,18 @@ node {
     }
     }
 
-    stage('Deploy') {
-        sh ("docker run -d -p 3333:3333 ${dockerhubaccountid}/${application}:${BUILD_NUMBER}")
+   stage("Deploy SpringBoot App!") {
+		 withCredentials([sshUserPrivateKey(credentialsId: 'softtech-priv-key-139', keyFileVariable: 'identity', passphraseVariable: '', usernameVariable: 'softtech')]) {
+		 remote.user = softtech
+	         remote.identityFile = identity
+		
+		 sshCommand remote: remote, command: 'mkdir deployment', failOnError:'false'
+		 sshCommand remote: remote, command: 'cd /home/softtech/deployment;docker run -d -p 3333:3333 ${dockerhubaccountid}/${application}:${BUILD_NUMBER}'
+		}	  
+		  
+	stage('Remove old images') {
+	sshCommand remote: remote, command: 'cd /home/softtech/deployment;docker rmi ${dockerhubaccountid}/${application}:latest -f'
+	}
+        
     }
-
-    stage('Remove old images') {
-        // remove old docker images
-        sh("docker rmi ${dockerhubaccountid}/${application}:latest -f")
-   }
 }
