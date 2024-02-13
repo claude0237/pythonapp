@@ -2,7 +2,7 @@ node {
     def application = "pythonapp"
     def dockerhubaccountid = "claudenkoma"
 	def remote = [:]
-	remote.name = "softtech"
+	remote.name = "k8s_master"
 	remote.host = "10.12.1.139"
 	remote.allowAnyHosts = true
 	
