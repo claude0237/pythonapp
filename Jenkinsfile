@@ -21,7 +21,7 @@ node {
     }
     }
 
-   stage("Deploy SpringBoot App!") {
+   stage("Deploy App!") {
 	 def dockerhubaccountid = "claudenkoma"
 	 def application = "pythonapp"
 	  withCredentials([sshUserPrivateKey(credentialsId: 'softtech-priv-key-139', keyFileVariable: 'identity', passphraseVariable: '', usernameVariable: 'softtech')]) {
