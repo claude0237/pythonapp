@@ -25,9 +25,9 @@ node {
      remote.user = softtech
      remote.identityFile = identity
      sshCommand remote: remote, command: 'mkdir deployment', failOnError:'false'
-     sshCommand remote: remote, command: 'rm /home/jenkins/deployment/deploy.sh', failOnError:'false'
+     sshCommand remote: remote, command: 'rm /home/softtech/deployment/deploy.sh', failOnError:'false'
      sshPut remote: remote, from: 'deploy.sh', into: '/home/softtech/deployment'
-     sshCommand remote: remote, command: 'cd /home/jenkins/deployment; chmod 777 deploy.sh;./deploy.sh'
+     sshCommand remote: remote, command: 'cd /home/softtech/deployment; chmod 777 deploy.sh;./deploy.sh'
     }	     
     }
 	
