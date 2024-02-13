@@ -20,18 +20,15 @@ node {
         app.push("latest")
     }
     }
-
    stage("Deploy App!") {
-	  withCredentials([sshUserPrivateKey(credentialsId: 'softtech-priv-key-139', keyFileVariable: 'identity', passphraseVariable: '', usernameVariable: 'softtech')]) {
-	  remote.user = softtech
-	  remote.identityFile = identity
-			
-	     sshCommand remote: remote, command: 'mkdir deployment', failOnError:'false'
-	     sshCommand remote: remote, command: 'docker run -d -p 3333:3333 ${dockerhubaccountid}/${application}:${BUILD_NUMBER}'
-	      }	   
-   stage('Remove old images') {
-	  sshCommand remote: remote, command: 'cd /home/softtech/deployment;docker rmi ${dockerhubaccountid}/${application}:latest -f'
-   }
-        
+     withCredentials([sshUserPrivateKey(credentialsId: 'softtech-priv-key-139', keyFileVariable: 'identity', passphraseVariable: '', usernameVariable: 'softtech')]) {
+     remote.user = softtech
+     remote.identityFile = identity
+     sshCommand remote: remote, command: 'mkdir deployment', failOnError:'false'
+     sshCommand remote: remote, command: 'rm /home/jenkins/deployment/deploy.sh', failOnError:'false'
+     sshPut remote: remote, from: 'deploy.sh', into: '/home/softtech/deployment'
+     sshCommand remote: remote, command: 'cd /home/jenkins/deployment; chmod 777 deploy.sh;./deploy.sh'
+    }	     
     }
+	
 }
