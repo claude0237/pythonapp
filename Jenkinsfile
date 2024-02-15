@@ -32,7 +32,7 @@ pipeline {
  stage('Run Docker container on remote hosts') {
              
             steps {
-                sh "docker -I softtech-priv-key-139 -H ssh://softtech@10.12.1.139  run -d -p 4001:80 claudenkoma/pythonapp"
+                sh "docker -H ssh://softtech@10.12.1.139 -i softtech-priv-key-139  run -d -p 4001:80 claudenkoma/pythonapp"
  
             }
         }
