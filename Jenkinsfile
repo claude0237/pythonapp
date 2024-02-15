@@ -1,34 +1,40 @@
-node {
-    def application = "pythonapp"
-    def dockerhubaccountid = "claudenkoma"
-    stage('Clone repository') {
-        checkout scm
-    }
-
-    stage('Build image') {
-        app = docker.build("${dockerhubaccountid}/${application}:${BUILD_NUMBER}")
-    }
-
-    stage('Push image') {
+pipeline {
+    agent any
+ stages {
+  stage('Docker Build and Tag') {
+           steps {
+              
+                sh 'docker build -t pythonapp:latest .' 
+                  sh 'docker tag pythonapp claudenkoma/pythonapp:latest'
+                sh 'docker tag pythonapp claudenkoma/pythonapp:$BUILD_NUMBER'
+               
+          }
+        }
+     
+  stage('Publish image to Docker Hub') {
+          
+            steps {
         withDockerRegistry([ credentialsId: "dockerHub", url: "" ]) {
-        app.push()
-        app.push("latest")
+          sh  'docker push claudenkoma/pythonapp:latest'
+          sh  'docker push claudenkoma/pythonapp:$BUILD_NUMBER' 
+        }
+                  
+          }
+        }
+     
+      stage('Run Docker container on Jenkins Agent') {
+             
+            steps {
+                sh "docker run -d -p 4030:80 claudenkoma/pythonapp"
+ 
+            }
+        }
+ stage('Run Docker container on remote hosts') {
+             
+            steps {
+                sh "docker -H ssh://softtech@10.12.1.139 run -d -p 4001:80 claudenkoma/pythonapp"
+ 
+            }
+        }
     }
-    }
-
-    stage('Deploy') {
-		withCredentials([sshUserPrivateKey(credentialsId: 'softtech-priv-key-139', keyFileVariable: 'identity', passphraseVariable: '', usernameVariable: 'softtech')]) {
-		    remote.user = softtech
-			remote.identityFile = identity
-        sshCommand remote: remote, command: 'docker run -d -p 3333:3333 ${dockerhubaccountid}/${application}:${BUILD_NUMBER}'
-		}
-    }
-
-    stage('Remove old images') {
-       withCredentials([sshUserPrivateKey(credentialsId: 'softtech-priv-key-139', keyFileVariable: 'identity', passphraseVariable: '', usernameVariable: 'softtech')]) {
-		    remote.user = softtech
-			remote.identityFile = identity 
-        sshCommand remote: 'docker rmi ${dockerhubaccountid}/${application}:latest -f'
-		}
-   }
 }
