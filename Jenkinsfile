@@ -32,7 +32,7 @@ pipeline {
  stage('Run Docker container on remote hosts') {
              
             steps {
-                sh "docker -H ssh://softtech@10.12.1.139 -e "JENKINS_AGENT_SSH_PUBKEY=softtech-priv-key-139" run -d -p 4001:80 claudenkoma/pythonapp"
+                sh "docker -I softtech-priv-key-139 -H ssh://softtech@10.12.1.139  run -d -p 4001:80 claudenkoma/pythonapp"
  
             }
         }
