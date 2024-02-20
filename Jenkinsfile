@@ -33,7 +33,7 @@ pipeline {
              
             steps {
                 sshagent (credentials: ['softtech-priv-key-139']) {
-                sh "docker -H ssh://softtech@10.12.1.139  run -d -p 4001:80 claudenkoma/pythonapp"
+                sh 'ssh -o StrictHostKeyChecking=no -l softtech 10.12.1.139  docker run -d -p 4001:80 claudenkoma/pythonapp
                  }
             }
         }
